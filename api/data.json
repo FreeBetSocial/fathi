@@ -1,0 +1,10 @@
+{
+    "title": "string",
+    "items": [
+        {
+            "from": "A",
+            "to": "B",
+            "value": 2
+        }
+    ]
+}
