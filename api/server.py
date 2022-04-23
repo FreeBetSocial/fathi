@@ -1,10 +1,9 @@
 
 from typing import Dict, Optional
 from fastapi import FastAPI,Path,UploadFile,File
-from matplotlib.pyplot import cla
 from pydantic import BaseModel
 import json, graph, fire,os
-
+from fastapi.middleware.cors import CORSMiddleware
 
 description = """
 ## REST API для нахождения оптимального пути и нахождения пожара 🚀
@@ -14,7 +13,7 @@ description = """
 
 class Items(BaseModel):
     title: str=Path(title="Название базы данных",default="Name")
-    items: list =Path(default={})
+    items: list =Path(default=[])
 
     def __str__(self) -> str:
         return json.dumps({
@@ -30,9 +29,19 @@ app = FastAPI(
         "name": "Дмитрий Владимирович Фатхи",
         "url": "https://ff.xox.su"
     },
-    docs_url="/restapi"
+
+    docs_url="/api/rest",
+    openapi_url="/api/openapi.json"
 )
 
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 try:
     with open("data.json") as f:
         item_data = json.loads(f.read())
@@ -59,6 +68,7 @@ async def upload_file(uploaded_file: Optional[UploadFile] = File(default="",titl
 
 @app.post("/api/math_graph")
 def math_graph(_from:str, _to:str, _block:list):
+    global item_data
     nodes = []
     init_graph = {}
     for i in item_data["items"]:
@@ -81,14 +91,13 @@ def math_graph(_from:str, _to:str, _block:list):
     }
 
 @app.post("/api/update")
-def update_data(item:Items):
+def update_data(items:Items):
     global item_data
-    item_data = item
-    print(item)
+    item_data =json.loads(str(items))
     with open("data.json","w") as f:
-        f.write(str(item))
+        f.write(str(items))
     return {
-
+        "state":1
     }
 
 @app.post("/api/get",response_model=Items)

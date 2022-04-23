@@ -1,10 +1,20 @@
 {
-    "title": "string",
+    "title": "",
     "items": [
         {
             "from": "A",
             "to": "B",
-            "value": 2
+            "value": 3
+        },
+        {
+            "from": "B",
+            "to": "C",
+            "value": 3
+        },
+        {
+            "from": "A",
+            "to": "C",
+            "value": 33
         }
     ]
 }
